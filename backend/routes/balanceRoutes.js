@@ -1,10 +1,13 @@
 const express = require('express')
 const router = express.Router()
-const { calculateBalances } = require('../services/balanceService')
+const { calculateGroupBalances } = require('../services/balanceService.js')
 
-router.get('/', async (req, res) => {
-    const { event_id } = req.query
-    const result = await calculateBalances(event_id)
+router.get('/group/:group_id', async (req, res) => {
+
+    const { group_id } = req.params
+
+    const result = await calculateGroupBalances(group_id)
+
     res.json(result)
 })
 
