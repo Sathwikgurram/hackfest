@@ -4,21 +4,24 @@ const app=express();
 require('dotenv').config();
 const supabase=require('./supabase.js');
 
+const groupRoutes = require('./routes/groupRoutes');
+const memberRoutes = require('./routes/memberRoutes');
+const eventRoutes = require('./routes/eventRoutes');
+const expenseRoutes = require('./routes/expenseRoutes');
+const balanceRoutes = require('./routes/balanceRoutes');
+
 
 const port=process.env.PORT ;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.post('/group',async(req,res)=>{
-    const {name,created_by}=req.body;
-    const {data,error}=await supabase.from('groups').insert([{name,created_by}]).select();
-    if(error){
-        res.status(500).json({error:error.message});
-    }else{
-        res.status(200).json({message:'Group created successfully',group:data[0]});
-    }
-}); 
+app.use('/group', groupRoutes);
+app.use('/member', memberRoutes);
+app.use('/event', eventRoutes);
+app.use('/expense', expenseRoutes);
+app.use('/balance', balanceRoutes);
+
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
 });
