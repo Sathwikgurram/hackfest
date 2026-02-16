@@ -1,19 +1,18 @@
 const express=require('express');
 const cors=require('cors');
 const app=express();
-const port=process.env.PORT || 8000;
+const port=process.env.PORT || 5000;
 require('dotenv').config();
-const supabase = require("./supabase.js");
+const supabase=require('./supabase.js');
+
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-
-
 app.post('/group',async(req,res)=>{
     const {name,created_by}=req.body;
-    const {data,error}=await supabase.from('groups').insert([{name,created_by}]);
+    const {data,error}=await supabase.from('groups').insert([{name,created_by}]).select();
     if(error){
         res.status(500).json({error:error.message});
     }else{
