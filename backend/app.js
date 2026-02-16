@@ -3,9 +3,13 @@ const cors=require('cors');
 const app=express();
 const port=process.env.PORT || 8000;
 require('dotenv').config();
+const supabase = require("./supabase.js");
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+
+
 
 app.post('/group',async(req,res)=>{
     const {name,created_by}=req.body;
