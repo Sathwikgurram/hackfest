@@ -45,6 +45,7 @@ async function calculateGroupBalances(group_id) {
         .from('settlements')
         .select('*')
         .eq('group_id', group_id)
+        .eq('status', 'approved')
     for (let pay of payments) {
 
         const from = pay.from_member

@@ -10,6 +10,7 @@ const eventRoutes = require('./routes/eventRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const balanceRoutes = require('./routes/balanceRoutes');
 const settlementRoutes = require('./routes/settlementRoutes');
+const approveRoutes = require('./routes/approveRoutes');
 
 const port=process.env.PORT ;
 app.use(cors());
@@ -22,6 +23,7 @@ app.use('/event', eventRoutes);
 app.use('/expense', expenseRoutes);
 app.use('/balance', balanceRoutes);
 app.use('/settlement', settlementRoutes);
+app.use('/approve', approveRoutes);
 
 
 app.listen(port,()=>{
