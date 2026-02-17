@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
     res.json({ message: "Custom split expense added successfully" })
 });
 
-//get all expenses of an event
+//get expense of an event by id
 router.get('/event/:event_id', async (req, res) => {
 
     const { event_id } = req.params

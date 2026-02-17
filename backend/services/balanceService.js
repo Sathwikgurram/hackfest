@@ -2,7 +2,7 @@ const supabase = require('../supabase')
 
 async function calculateGroupBalances(group_id) {
 
-    // Step 1: Get all events of group
+    // Get all events of group
     const { data: events } = await supabase
         .from('events')
         .select('id')
@@ -10,7 +10,7 @@ async function calculateGroupBalances(group_id) {
 
     const eventIds = events.map(e => e.id)
 
-    // Step 2: Get all expenses across events
+    // Get all expenses across events
     const { data: expenses } = await supabase
         .from('expenses')
         .select(`
@@ -40,6 +40,28 @@ async function calculateGroupBalances(group_id) {
         }
     }
 
+
+    const { data: payments } = await supabase
+        .from('settlements')
+        .select('*')
+        .eq('group_id', group_id)
+    for (let pay of payments) {
+
+        const from = pay.from_member
+        const to = pay.to_member
+        const amount = parseFloat(pay.amount)
+
+        if (!balances[from]) balances[from] = 0
+        if (!balances[to]) balances[to] = 0
+
+        balances[from] += amount
+        balances[to] -= amount
+    }
+
+
+
+
+
     return simplifyDebts(balances)
 }
 
@@ -60,11 +82,9 @@ function simplifyDebts(balances) {
             debtors.push({ person, amount: -value })
     }
 
-    creditors.sort((a,b) => b.amount - a.amount)
-    debtors.sort((a,b) => b.amount - a.amount)
-
+    creditors.sort((a, b) => b.amount - a.amount)
+    debtors.sort((a, b) => b.amount - a.amount)
     const settlements = []
-
     let i = 0, j = 0
 
     while (i < debtors.length && j < creditors.length) {

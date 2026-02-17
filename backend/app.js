@@ -9,7 +9,7 @@ const memberRoutes = require('./routes/memberRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const balanceRoutes = require('./routes/balanceRoutes');
-
+const settlementRoutes = require('./routes/settlementRoutes');
 
 const port=process.env.PORT ;
 app.use(cors());
@@ -21,6 +21,8 @@ app.use('/member', memberRoutes);
 app.use('/event', eventRoutes);
 app.use('/expense', expenseRoutes);
 app.use('/balance', balanceRoutes);
+app.use('/settlement', settlementRoutes);
+
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);

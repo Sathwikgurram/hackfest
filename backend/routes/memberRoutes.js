@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
 });
 
 //get all members of a group
-router.get('/group/:group_id', async (req, res) => {
+router.get('/:group_id', async (req, res) => {
     const { group_id } = req.params
 
     const { data, error } = await supabase
