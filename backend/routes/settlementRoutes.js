@@ -3,10 +3,11 @@ const router = express.Router();
 const supabase = require('../supabase');
 
 
-
+// Create settlement (direct, no approval)
 router.post('/', async (req, res) => {
 
-    const { from_member, to_member, amount, group_id, created_by } = req.body
+    console.log("Received settlement request:", req.body);
+    const { from_member, to_member, amount, group_id } = req.body;
 
     const { data, error } = await supabase
         .from('settlements')
@@ -15,76 +16,60 @@ router.post('/', async (req, res) => {
             to_member,
             amount,
             group_id,
-            created_by,
-            status: 'pending'
+            
         }])
-        .select()
+        .select();
 
-    if (error) return res.status(500).json({ error: error.message })
+    if (error) {
+        return res.status(500).json({ error: error.message });
+    }
 
     res.json({
-        message: "Payment recorded (pending approval)",
+        message: "Settlement recorded successfully",
         settlement: data[0]
-    })
+    });
+
 });
 
 
-
+// Get all settlements of a group
 router.get('/group/:group_id', async (req, res) => {
 
-    const { group_id } = req.params
+    const { group_id } = req.params;
 
     const { data, error } = await supabase
         .from('settlements')
         .select('*')
         .eq('group_id', group_id)
+        .order('created_at', { ascending: false });
 
-    if (error) return res.status(500).json({ error: error.message })
+    if (error) {
+        return res.status(500).json({ error: error.message });
+    }
 
-    res.json(data)
+    res.json(data);
+
 });
 
-//put - approve settlement
-router.put('/:id/approve', async (req, res) => {
 
-    const { id } = req.params
-    const { approved_by } = req.body
+// Optional: Delete settlement (if mistake)
+router.delete('/:id', async (req, res) => {
 
-    const { data, error } = await supabase
+    const { id } = req.params;
+
+    const { error } = await supabase
         .from('settlements')
-        .update({
-            status: 'approved',
-            approved_by,
-            approved_at: new Date()
-        })
-        .eq('id', id)
-        .select()
+        .delete()
+        .eq('id', id);
 
-    if (error) return res.status(500).json({ error: error.message })
+    if (error) {
+        return res.status(500).json({ error: error.message });
+    }
 
     res.json({
-        message: "Settlement approved",
-        settlement: data[0]
-    })
-});
+        message: "Settlement deleted successfully"
+    });
 
-//put - reject settlement
-router.put('/:id/reject', async (req, res) => {
-
-    const { id } = req.params
-
-    const { data, error } = await supabase
-        .from('settlements')
-        .update({ status: 'rejected' })
-        .eq('id', id)
-        .select()
-
-    if (error) return res.status(500).json({ error: error.message })
-
-    res.json({
-        message: "Settlement rejected",
-        settlement: data[0]
-    })
 });
 
 
