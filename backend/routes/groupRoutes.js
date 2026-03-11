@@ -3,17 +3,36 @@ const router = express.Router()
 const supabase = require('../supabase');
 
 router.post('/', async (req, res) => {
-    const { name, created_by } = req.body
+
+    const { name } = req.body
 
     const { data, error } = await supabase
         .from('groups')
-        .insert([{ name, created_by }])
+        .insert([{ name }])
         .select()
 
     if (error) return res.status(500).json({ error: error.message })
 
     res.json(data[0])
 });
+
+
+router.put('/:group_id/creator', async (req, res) => {
+
+    const { group_id } = req.params
+    const { member_id } = req.body
+
+    const { data, error } = await supabase
+        .from('groups')
+        .update({ created_by: member_id })
+        .eq('id', group_id)
+        .select()
+
+    if (error) return res.status(500).json({ error: error.message })
+
+    res.json(data[0])
+});
+
 
 //get all groups 
 router.get('/', async (req, res) => {
